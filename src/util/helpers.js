@@ -1,0 +1,1 @@
+export let mailsRe = /\w+@\w+\.\w+/ig;
