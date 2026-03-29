@@ -1,7 +1,7 @@
 import { FaArrowRight } from "react-icons/fa6";
 import { LuLeaf } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import Badge from "./Bubbles/badge";
+import Badge from "./Bubbles/Badge.jsx";
 
 
 const HeroSection = ({badge,titleOne, titleTwo,description, fButton, sButton, imageProps={}  }) => {
