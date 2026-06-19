@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import {
   MdOutlineEnergySavingsLeaf,
@@ -17,8 +17,8 @@ import { currencyFormatter } from "../util/formatters.js";
 export default function HomePage() {
   const dispatch = useDispatch();
   // instead of using the products and then slice it again
-  const allProducts = useSelector((state) => state.products.items);
-  const fourProducts = useMemo(() => allProducts.slice(0, 4), [allProducts]);
+  const featured = useSelector((state) => state.products.featured);
+  const loading = useSelector((state) => state.products.featuredLoading);
 
   return (
     <div className="bg-white text-black dark:bg-dark dark:text-white">
@@ -110,56 +110,63 @@ export default function HomePage() {
 
           {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {fourProducts.map((product) => (
-              <div
-                key={product.id}
-                className="group relative bg-white border border-slate-100 dark:bg-secondary dark:border-secondary  rounded-2xl overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1"
-              >
-                {/* Image */}
-                <div className="aspect-square bg-slate-50 overflow-hidden">
-                  <Link
-                    to={`/products/${product.id}`}
-                    className="block w-full h-full"
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="animate-pulse bg-slate-200 h-64 rounded-xl"
+                  />
+                ))
+              : featured.map((product) => (
+                  <div
+                    key={product.id}
+                    className="group relative bg-white border border-slate-100 dark:bg-secondary dark:border-secondary  rounded-2xl overflow-hidden hover:shadow-2xl transition-all hover:-translate-y-1"
                   >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </Link>
-                </div>
+                    {/* Image */}
+                    <div className="aspect-square bg-slate-50 overflow-hidden">
+                      <Link
+                        to={`/products/${product.id}`}
+                        className="block w-full h-full"
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      </Link>
+                    </div>
 
-                {/* Product Info */}
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-1">
-                    <Link to={`/products/${product.id}`}>
-                      <h5 className="font-bold text-slate-900 text-lg dark:text-white hover:text-primary transition-colors">
-                        {product.name}
-                      </h5>
-                    </Link>
-                    <span className="text-primary font-bold">
-                      {currencyFormatter.format(product.price)}
-                    </span>
+                    {/* Product Info */}
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-1">
+                        <Link to={`/products/${product.id}`}>
+                          <h5 className="font-bold text-slate-900 text-lg dark:text-white hover:text-primary transition-colors">
+                            {product.name}
+                          </h5>
+                        </Link>
+                        <span className="text-primary font-bold">
+                          {currencyFormatter.format(product.price)}
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-slate-500 mb-6">
+                        {product.description?.length > 10
+                          ? product.description.slice(0, 70) + "..."
+                          : product.description || ""}
+                      </p>
+
+                      <button
+                        onClick={() => dispatch(addItemAsync(product))}
+                        className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary transition-colors cursor-pointer"
+                      >
+                        <MdOutlineShoppingBag size={18} />
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
-
-                  <p className="text-sm text-slate-500 mb-6">
-                    {product.description.length > 10
-                      ? product.description.slice(0, 70) + "..."
-                      : product.description}
-                  </p>
-
-                  <button
-                    onClick={() => dispatch(addItemAsync(product))}
-                    className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary transition-colors cursor-pointer"
-                  >
-                    <MdOutlineShoppingBag size={18} />
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            ))}
+                ))}
           </div>
 
           {/* Mobile View All */}
@@ -181,10 +188,10 @@ export default function HomePage() {
           <div className="order-2 md:order-1 relative ">
             <div className="grid grid-cols-2 gap-4">
               <div className="aspect-3/4 rounded-2xl overflow-hidden translate-y-8 bg-slate-200">
-                {!fourProducts[0]?.image ? null : (
+                {!featured[0]?.image ? null : (
                   <img
-                    src={fourProducts[0].image}
-                    alt={fourProducts[0].name}
+                    src={featured[0].image}
+                    alt={featured[0].name}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover"
@@ -193,10 +200,10 @@ export default function HomePage() {
               </div>
 
               <div className="aspect-3/4 rounded-2xl overflow-hidden bg-slate-200">
-                {!fourProducts[0]?.image ? null : (
+                {!featured[0]?.image ? null : (
                   <img
-                    src={fourProducts[2].image}
-                    alt={fourProducts[2].name}
+                    src={featured[2]?.image}
+                    alt={featured[2]?.name}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover"

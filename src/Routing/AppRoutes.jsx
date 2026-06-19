@@ -26,23 +26,26 @@ import { authActions } from "../store/slices/authSlice.js";
 import { fetchCart } from "../store/slices/cartSlice.js";
 import { checkoutAction } from "./Actions/checkoutAction.js";
 import { requireAuth } from "./loaders/checkAuthLoader.js";
-import { orderLoader } from "./loaders/orderLoader.js";
-import { productsLoader } from "./loaders/productsLoader.js";
+// import { orderLoader } from "./loaders/orderLoader.js";
 import Contact from "../pages/Contact.jsx";
+import { featuredProductsLoader } from "./loaders/featuredProductsLoader.js";
+import { productsLoader } from "./loaders/productsLoader.js";
+import LoadingSpinner from "../components/UI/LoadingSpinner.jsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    hydrateFallbackElement: <LoadingSpinner />,
     id: "root",
-    loader: async (args) => {
-      const [user] = await Promise.all([
-        getCurrentUser(),
-        productsLoader(store)(args),
-      ]);
+    loader: async () => {
+      const user = await getCurrentUser();
 
       store.dispatch(authActions.setUser(user));
-      if (user) await store.dispatch(fetchCart());
+
+      if (user) {
+        await store.dispatch(fetchCart());
+      }
 
       return { user };
     },
@@ -52,6 +55,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+        loader: featuredProductsLoader(store),
       },
       {
         path: "products",
@@ -60,6 +64,7 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <Products />,
+            loader: productsLoader(store),
           },
           { path: ":productId", element: <ProductDetails /> },
         ],
@@ -67,7 +72,7 @@ export const router = createBrowserRouter([
 
       { path: "features", element: <Features /> },
       { path: "about", element: <AboutPage /> },
-      { path: 'contact', element: <Contact />},
+      { path: "contact", element: <Contact /> },
       { path: "cart", element: <CartPage />, loader: requireAuth }, // Apply requireAuth to cart
       {
         path: "checkout",
@@ -77,7 +82,16 @@ export const router = createBrowserRouter([
           { index: true, element: <Checkout />, action: checkoutAction },
         ],
       },
-      { path: "success", element: <SuccessOrder />, loader: orderLoader },
+      {
+        path: "success",
+        element: (
+            <SuccessOrder />
+        ),
+        loader: async (args) => {
+  const { orderLoader } = await import("./loaders/orderLoader.js");
+  return orderLoader(args);
+},
+      },
     ],
   },
 
@@ -91,3 +105,19 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
+//  loader: () => import("./loaders/orderLoader.js").then(module => module.orderLoader())
+// lazy(import(...))
+
+// root loader
+// async (args) => {
+//       const [user] = await Promise.all([
+//         getCurrentUser(),
+//         productsLoader(store)(args),
+//       ]);
+
+//       store.dispatch(authActions.setUser(user));
+//       if (user) await store.dispatch(fetchCart());
+
+//       return { user };
+//     },

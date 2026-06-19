@@ -8,7 +8,7 @@ import {
   MdOutlineMenu,
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { logout } from "../services/authService.js";
 import { uiActions } from "../store/slices/uiSlice.js";
 import BubblesIcon from "./Bubbles/BubblesIcon.jsx";
@@ -193,12 +193,12 @@ export default function MainNavigation() {
                 )}
               </div>
             ) : (
-              <Link
+              <NavLink
                 to="/auth?mode=login"
                 className="hidden md:block text-sm font-bold text-white border-2 border-white/30 rounded-full px-5 py-2 hover:bg-white/10 hover:border-white/50 transition-all"
               >
                 Login
-              </Link>
+              </NavLink>
             )}
 
             {/* Mobile Menu Toggle Button */}
@@ -291,13 +291,13 @@ export default function MainNavigation() {
                   </div>
                 </div>
               ) : (
-                <Link
+                <NavLink
                   to="/auth?mode=login"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block w-full text-center text-sm font-bold text-white border-2 border-white/30 rounded-full px-5 py-2 hover:bg-white/10 transition-all"
                 >
                   Login
-                </Link>
+                </NavLink>
               )}
             </div>
 
