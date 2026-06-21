@@ -174,11 +174,11 @@ export default function MainNavigation() {
 
                     {/* Links */}
                     <div className="flex flex-col gap-2">
-                      <a  className="text-sm hover:text-primary transition block">
+                      <a  className="text-sm hover:text-primary transition block cursor-pointer">
                         Profile
                       </a>
 
-                      <a  className="text-sm hover:text-primary transition block">
+                      <a  className="text-sm hover:text-primary transition block cursor-pointer">
                         Orders
                       </a>
 

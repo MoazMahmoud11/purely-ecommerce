@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
 import PriceRangeSlider from "../components/Products/PriceRangeSlider";
 import LoadingSpinner from "../components/UI/LoadingSpinner.jsx";
-import { addItemAsync } from "../store/slices/cartSlice.js";
+
 import { filterActions } from "../store/slices/filterSlice";
 import { currencyFormatter } from "../util/formatters";
 
@@ -320,12 +320,13 @@ const Products = () => {
                         )}
                       </div>
 
-                      <button
+                      <Link
                         className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center hover:bg-gray-800 transition-all shadow-md active:scale-95 cursor-pointer"
-                        onClick={() => dispatch(addItemAsync(product))}
+                        // onClick={() => dispatch(addItemAsync(product))}
+                        to={`/products/${product.id}`}
                       >
                         <BiSolidCartAdd className="w-7 h-7" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

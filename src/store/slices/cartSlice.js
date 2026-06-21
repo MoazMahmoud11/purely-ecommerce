@@ -5,6 +5,7 @@ import {
   getOrCreateCart,
   updateCartItem,
 } from "../../services/cartService.js";
+import { toast } from "react-toastify";
 
 // Helper to save guest cart locally
 const syncGuestCart = (items) => {
@@ -154,7 +155,9 @@ export const addItemAsync = createAsyncThunk(
     const item = state.cart.items.find((i) => i.product_id === product.id);
     try {
       await updateCartItem(product.id, item.quantity); // 2. Push accurate DB update
+      toast.success(`${product.name} added to cart`);
     } catch (error) {
+      toast.error(error.message);
       return rejectWithValue(error.message);
     }
     return item;
@@ -170,10 +173,13 @@ export const removeItemAsync = createAsyncThunk(
     try {
       if (item && item.quantity > 1) {
         await updateCartItem(productId, item.quantity - 1); // 2. Push accurate DB update
+        toast.info(`${item.products.name} removed from cart`);
       } else {
+        toast.warning(`${item.products.name} removed from cart`);
         await deleteCartItem(productId);
       }
     } catch (error) {
+      toast.error(error.message);
       return rejectWithValue(error.message);
     }
   },
@@ -185,7 +191,9 @@ export const deleteItemAsync = createAsyncThunk(
     dispatch(deleteItem(productId)); // 1. Instantly update UI
     try {
       await deleteCartItem(productId); // 2. Push accurate DB update
+      toast.success(`${productId} deleted from cart`);
     } catch (error) {
+      toast.error(error.message);
       return rejectWithValue(error.message);
     }
   },
