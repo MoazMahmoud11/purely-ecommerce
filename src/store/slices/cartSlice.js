@@ -157,7 +157,7 @@ export const addItemAsync = createAsyncThunk(
       await updateCartItem(product.id, item.quantity); // 2. Push accurate DB update
       toast.success(`${product.name} added to cart`);
     } catch (error) {
-      toast.error(error.message);
+      toast.warning(`added to cart but you ${error.message}`);
       return rejectWithValue(error.message);
     }
     return item;
@@ -179,7 +179,7 @@ export const removeItemAsync = createAsyncThunk(
         await deleteCartItem(productId);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(`Removed Item but ${error.message}`);
       return rejectWithValue(error.message);
     }
   },

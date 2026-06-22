@@ -4,6 +4,7 @@ import uiReducer from './slices/uiSlice.js';
 import filterReducer from './slices/filterSlice.js'
 import cartReducer from './slices/cartSlice.js'
 import authReducer from './slices/authSlice.js';
+import favoriteReducer from './slices/favoriteSlice.js';
 
 
 
@@ -14,6 +15,7 @@ const store = configureStore({
     user: authReducer, // User / Auth state
     filter: filterReducer,
     ui: uiReducer,
+    favorites: favoriteReducer,
   }
 });
 

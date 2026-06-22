@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { BiSolidCartAdd } from "react-icons/bi";
-import { HiStar, HiX } from "react-icons/hi";
+import { HiStar, HiX, HiOutlineHeart, HiHeart } from "react-icons/hi";
 import {
   HiChevronDown,
   HiOutlineAdjustmentsHorizontal,
-  HiOutlineHeart,
 } from "react-icons/hi2";
 // import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +11,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PriceRangeSlider from "../components/Products/PriceRangeSlider";
 import LoadingSpinner from "../components/UI/LoadingSpinner.jsx";
 
+import { toggleFavorite } from "../store/slices/favoriteSlice.js";
 import { filterActions } from "../store/slices/filterSlice";
 import { currencyFormatter } from "../util/formatters";
 
@@ -26,6 +26,7 @@ const Products = () => {
   );
 
   const allProducts = useSelector((state) => state.products.items);
+  const favorites = useSelector((state) => state.favorites.items);
   const loading = useSelector((state) => state.products.loading);
   const error = useSelector((state) => state.products.error);
 
@@ -263,74 +264,96 @@ const Products = () => {
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-              {products.map((product, index) => (
-                <div
-                  key={product.id}
-                  className="group bg-white dark:bg-dark rounded-2xl overflow-hidden border border-gray-100 dark:border-primary shadow-sm hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="relative aspect-square bg-gray-50 overflow-hidden">
-                    {product.badge && (
-                      <div
-                        className={`absolute top-4 left-4 z-10 ${product.badgeColor} text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded`}
-                      >
-                        {product.badge}
-                      </div>
-                    )}
-                    <button className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors ">
-                      <HiOutlineHeart className="w-5 h-5 text-gray-400 hover:text-red-500 transition-colors duration-200 cursor-pointer" />
-                    </button>
-                    <Link
-                      to={`/products/${product.id}`}
-                      className="block w-full h-full"
-                    >
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        fetchPriority={index < 6 ? "high" : "auto"}
-                        loading={index < 6 ? "eager" : "lazy"}
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </Link>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-1 mb-2">
-                      <HiStar className="w-4 h-4 text-yellow-400" />
-                      <span className="text-xs font-bold text-gray-600 dark:text-secondary-text">
-                        {product.rating} ({product.reviews} reviews)
-                      </span>
-                    </div>
-                    <Link to={`/products/${product.id}`}>
-                      <p className="text-lg font-bold mb-1 hover:text-teal-600 transition-colors">
-                        {product.name}
-                      </p>
-                    </Link>
-                    <p className="text-sm text-gray-400 mb-4 line-clamp-1 dark:text-secondary-text">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <span className="text-xl font-black text-teal-600">
-                          {currencyFormatter.format(product.price)}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-xs text-gray-400 line-through">
-                            {currencyFormatter.format(product.originalPrice)}
-                          </span>
-                        )}
-                      </div>
+              {products.map((product, index) => {
+                const isFavorite = favorites.some(
+                  (item) => item.product_id === product.id
+                );
 
-                      <Link
-                        className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center hover:bg-gray-800 transition-all shadow-md active:scale-95 cursor-pointer"
-                        // onClick={() => dispatch(addItemAsync(product))}
-                        to={`/products/${product.id}`}
+                return (
+                  <div
+                    key={product.id}
+                    className="group bg-white dark:bg-dark rounded-2xl overflow-hidden border border-gray-100 dark:border-primary shadow-sm hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="relative aspect-square bg-gray-50 overflow-hidden">
+                      {product.badge && (
+                        <div
+                          className={`absolute top-4 left-4 z-10 ${product.badgeColor} text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded`}
+                        >
+                          {product.badge}
+                        </div>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          dispatch(toggleFavorite(product));
+                        }}
+                        className={`absolute top-4 right-4 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 ${
+                          isFavorite
+                            ? "bg-red-500 shadow-md"
+                            : "bg-white/80"
+                        }`}
                       >
-                        <BiSolidCartAdd className="w-7 h-7" />
+                        {isFavorite ? (
+                          <HiHeart className="h-5 w-5 text-white" />
+                        ) : (
+                          <HiOutlineHeart className="h-5 w-5 text-gray-400 transition-colors duration-200 hover:text-red-500 " />
+                        )}
+                      </button>
+                      <Link
+                        to={`/products/${product.id}`}
+                        className="block w-full h-full"
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          fetchPriority={index < 6 ? "high" : "auto"}
+                          loading={index < 6 ? "eager" : "lazy"}
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       </Link>
                     </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-1 mb-2">
+                        <HiStar className="w-4 h-4 text-yellow-400" />
+                        <span className="text-xs font-bold text-gray-600 dark:text-secondary-text">
+                          {product.rating} ({product.reviews} reviews)
+                        </span>
+                      </div>
+                      <Link to={`/products/${product.id}`}>
+                        <p className="text-lg font-bold mb-1 hover:text-teal-600 transition-colors">
+                          {product.name}
+                        </p>
+                      </Link>
+                      <p className="text-sm text-gray-400 mb-4 line-clamp-1 dark:text-secondary-text">
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="text-xl font-black text-teal-600">
+                            {currencyFormatter.format(product.price)}
+                          </span>
+                          {product.originalPrice && (
+                            <span className="text-xs text-gray-400 line-through">
+                              {currencyFormatter.format(product.originalPrice)}
+                            </span>
+                          )}
+                        </div>
+
+                        <Link
+                          className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center hover:bg-gray-800 transition-all shadow-md active:scale-95 cursor-pointer"
+                          // onClick={() => dispatch(addItemAsync(product))}
+                          to={`/products/${product.id}`}
+                        >
+                          <BiSolidCartAdd className="w-7 h-7" />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Load More */}
