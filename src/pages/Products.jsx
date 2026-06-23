@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BiSolidCartAdd } from "react-icons/bi";
-import { HiStar, HiX, HiOutlineHeart, HiHeart } from "react-icons/hi";
-import {
-  HiChevronDown,
-  HiOutlineAdjustmentsHorizontal,
-} from "react-icons/hi2";
+import { HiHeart, HiOutlineHeart, HiStar, HiX } from "react-icons/hi";
+import { HiChevronDown, HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 // import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
@@ -266,7 +263,7 @@ const Products = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
               {products.map((product, index) => {
                 const isFavorite = favorites.some(
-                  (item) => item.product_id === product.id
+                  (item) => item.product_id === product.id,
                 );
 
                 return (
@@ -290,9 +287,7 @@ const Products = () => {
                           dispatch(toggleFavorite(product));
                         }}
                         className={`absolute top-4 right-4 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 ${
-                          isFavorite
-                            ? "bg-red-500 shadow-md"
-                            : "bg-white/80"
+                          isFavorite ? "bg-red-500 shadow-md" : "bg-white/80"
                         }`}
                       >
                         {isFavorite ? (

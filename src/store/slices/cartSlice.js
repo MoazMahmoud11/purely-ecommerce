@@ -179,7 +179,7 @@ export const removeItemAsync = createAsyncThunk(
         await deleteCartItem(productId);
       }
     } catch (error) {
-      toast.error(`Removed Item but ${error.message}`);
+      toast.error(`Removed Item but ${error.message}`); 
       return rejectWithValue(error.message);
     }
   },

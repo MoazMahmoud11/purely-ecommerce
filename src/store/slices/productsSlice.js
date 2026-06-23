@@ -8,7 +8,7 @@ export const fetchProducts = createAsyncThunk(
       // 🔥 Optimize payload for mobile by selecting only necessary fields
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, price, image, stock, description, usage, safety");
+        .select("*");
 
       if (error) {
         return rejectWithValue(error.message);
